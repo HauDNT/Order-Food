@@ -6,6 +6,7 @@ import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { hashPassword } from '@/utils/bcryptPassword.util';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -69,11 +70,18 @@ export class UsersService {
         return `This action returns a #${id} user`;
     }
 
-    update(id: number, updateUserDto: UpdateUserDto) {
-        return `This action updates a #${id} user`;
+    async update(updateUserDto: UpdateUserDto) {
+        return await this.userModel.updateOne({ _id: updateUserDto._id }, { ...updateUserDto });
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} user`;
+    async remove(_id: string) {
+        // Check _id:
+        if (mongoose.isValidObjectId(_id)) {
+            // Delete item:
+            return await this.userModel.deleteOne({ _id });
+        }
+        else {
+            throw new BadRequestException("_id không đúng định dạng");
+        }
     }
 }
