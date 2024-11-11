@@ -1,4 +1,4 @@
-# Dự Án JWT với Next.js 14 và NestJS 10
+# Website đặt món ăn online với Next.js 14 và NestJS 10
 
 <p align="center">
     <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" style="margin-right: 100px;" />
@@ -7,7 +7,8 @@
 
 ## Mô Tả Dự Án
 
-Dự án này là một ứng dụng web toàn diện sử dụng **Next.js** cho frontend và **NestJS** cho backend, hỗ trợ xác thực người dùng thông qua JSON Web Tokens (JWT). Ứng dụng cho phép người dùng đăng nhập, đăng ký và quản lý tài khoản của họ một cách an toàn.
+Dự án này là một ứng dụng web đặt món ăn online toàn diện sử dụng **Next.js** cho frontend và **NestJS** cho backend, hỗ trợ xác thực người dùng thông qua JSON Web Tokens (JWT). 
+Ứng dụng cho phép người dùng đăng nhập, đăng ký và quản lý tài khoản của họ một cách an toàn.
 
 ### Tính Năng
 
