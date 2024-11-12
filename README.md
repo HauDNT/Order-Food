@@ -1,24 +1,11 @@
-<style>
-    .logo-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding-right: 50px;
-    }
-
-    .logo-container img {
-        margin-right: 50px;
-    }
-</style>
-
 # Website đặt món ăn online với Next.js 14 và NestJS 10
 
-<div class="logo-container">
-  <img src="https://nestjs.com/img/logo-small.svg" width="150" alt="Nest Logo" />
-  <img src="https://assets.vercel.com/image/upload/v1662130559/nextjs/Icon_light_background.png" width="150" alt="Next Logo" />
-  <img src="https://ies.solutions/wordpress/wp-content/uploads/jwt.png" width="150" alt="JWT Logo" />
-  <img src="https://th.bing.com/th/id/R.4f46be41435ec190eccb1e819229df7b?rik=qLJtJ2oihy9E8w&riu=http%3a%2f%2fjoelcox.io%2fscripts%2flogos%2fmongo-logo.png&ehk=07W0kY%2bKXtJZJn1s35izmffF6NX0jelfmidCaghxea0%3d&risl=&pid=ImgRaw&r=0" width="150" alt="MongoDB Logo" />
-</div>
+<p align="center">
+    <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" style="margin-right: 100px;" />
+    <img src="https://assets.vercel.com/image/upload/v1662130559/nextjs/Icon_light_background.png" width="120" alt="Next Logo" style="margin-right: 100px;" />
+    <img src="https://th.bing.com/th/id/R.4f46be41435ec190eccb1e819229df7b?rik=qLJtJ2oihy9E8w&riu=http%3a%2f%2fjoelcox.io%2fscripts%2flogos%2fmongo-logo.png&ehk=07W0kY%2bKXtJZJn1s35izmffF6NX0jelfmidCaghxea0%3d&risl=&pid=ImgRaw&r=0" width="120" alt="MongoDB Logo" style="margin-right: 100px;" />
+    <img src="https://ies.solutions/wordpress/wp-content/uploads/jwt.png" width="120" alt="JWT Logo"/>
+</p>
 
 ## Mô Tả Dự Án
 
