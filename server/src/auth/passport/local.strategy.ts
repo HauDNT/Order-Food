@@ -6,12 +6,7 @@ import { AuthService } from "@/auth/auth.service";
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
     constructor(private authService: AuthService) {
-        super();    // Body: { username & password }
-
-        // super({
-        //     usernameField: 'email',  // Cấu hình để sử dụng 'email' thay vì mặc định của passport là 'username' | Body: { email & password }
-        //     passwordField: 'password'
-        // });
+        super();
     }
 
     async validate(email: string, password: string): Promise<any> {
