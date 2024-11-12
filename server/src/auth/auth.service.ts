@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersService } from '@/modules/users/users.service';
 import { comparePassword } from '@/utils/bcryptPassword.util';
 import { JwtService } from '@nestjs/jwt';
@@ -10,18 +10,25 @@ export class AuthService {
         private jwtService: JwtService,
     ) { }
 
-    async signIn(email: string, password: string): Promise<any> {
-        const user = await this.usersService.findByEmail(email);
-        const isValidPassword = await comparePassword(password, user?.password);
+    async validateUser(username: string, password: string): Promise<any> {
+        const user = await this.usersService.findByEmail(username);
 
-        if (!isValidPassword) {
-            throw new UnauthorizedException("Email hoặc mật khẩu không trùng khớp!");
+        if (user) {
+            const isValidPassword = await comparePassword(password, user?.password);
+
+            if (isValidPassword) {
+                return user;
+            }
         }
 
-        const payload = { sub: user?._id, email: user.email };
-        
+        return null;
+    }
+
+    async login (user: any) {
+        const payload = { username: user.email, sub: user._id };
+
         return {
-            access_token: await this.jwtService.signAsync(payload),
+            access_token: this.jwtService.sign(payload)
         }
     }
 }
