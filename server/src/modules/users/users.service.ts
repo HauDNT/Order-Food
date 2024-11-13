@@ -10,12 +10,14 @@ import mongoose from 'mongoose';
 import { RegisterAuthDto } from '@/auth/dto/register-auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectModel(User.name)
         private userModel: Model<User>,
+        private readonly mailerService: MailerService,
     ) { }
 
     async isEmailExist(email: string) {
@@ -34,7 +36,12 @@ export class UsersService {
             const passwordHashed = await hashPassword(password);
 
             const newUser = await this.userModel.create({
-                name, email, password: passwordHashed, phone, address, image
+                name,
+                email,
+                password: passwordHashed,
+                phone,
+                address,
+                image
             });
 
             return {
@@ -101,18 +108,29 @@ export class UsersService {
         if (!isUserExist) {
             // Hash password
             const passwordHashed = await hashPassword(password);
+            const codeIdGenerated = uuidv4();
 
             const newUser = await this.userModel.create({
-                name, 
-                email, 
+                name,
+                email,
                 password: passwordHashed,
                 isActive: false,
-                codeId: uuidv4(),
-                codeExpired: dayjs().add(1, 'minutes'),
+                codeId: codeIdGenerated,
+                codeExpired: dayjs().add(30, 'seconds'),
+                // codeExpired: dayjs().add(5, 'minutes'),
             });
 
-            // Send back the account verification email 
-            // in parallel with the feedback to the client 
+            // Send email
+            this.mailerService.sendMail({
+                to: newUser.email,
+                subject: 'Activate your account at OrderFood',
+                from: 'noreply@gmail.com',
+                template: "mailer.template.hbs",
+                context: {
+                    name: newUser?.name ?? newUser.email,
+                    activationCode: codeIdGenerated,
+                }
+            });
 
             return {
                 _id: newUser._id

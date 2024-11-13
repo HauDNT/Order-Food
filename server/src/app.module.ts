@@ -19,6 +19,7 @@ import { ReviewsModule } from '@/modules/reviews/reviews.module';
 import { AuthModule } from '@/auth/auth.module';
 import { JwtAuthGuard } from '@/auth/passport/jwt-auth.guard';
 import { MailModule } from './mail/mail.module';
+import { join } from 'path';
 
 @Module({
     imports: [
@@ -57,13 +58,13 @@ import { MailModule } from './mail/mail.module';
                     from: '"No Reply" <no-reply@localhost>',
                 },
                 // preview: true,
-                // template: {
-                //     dir: process.cwd() + '/template/',
-                //     adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
-                //     options: {
-                //         strict: true,
-                //     },
-                // },
+                template: {
+                    dir: join(__dirname, '/templates/'),     // mailer.template.hbs
+                    adapter: new HandlebarsAdapter(),
+                    options: {
+                        strict: true,
+                    },
+                },
             }),
             inject: [ConfigService],
         }),
