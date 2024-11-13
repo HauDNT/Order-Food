@@ -1,4 +1,4 @@
-import { IsEmail, IsMongoId, IsNotEmpty, IsOptional } from "class-validator";
+import { IsMongoId, IsNotEmpty, IsOptional } from "class-validator";
 
 export class UpdateUserDto {
     @IsMongoId({ message: "_id không hợp lệ"})

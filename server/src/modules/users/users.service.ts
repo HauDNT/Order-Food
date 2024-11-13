@@ -103,7 +103,9 @@ export class UsersService {
             const passwordHashed = await hashPassword(password);
 
             const newUser = await this.userModel.create({
-                name, email, password: passwordHashed,
+                name, 
+                email, 
+                password: passwordHashed,
                 isActive: false,
                 codeId: uuidv4(),
                 codeExpired: dayjs().add(1, 'minutes'),
