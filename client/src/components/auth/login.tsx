@@ -1,12 +1,25 @@
-'use client'
-import { Button, Col, Divider, Form, Input, Row } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import Link from 'next/link';
+"use client"
+import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Col, Divider, Form, Input, Row } from "antd";
+import { authenticate } from "@/utils/actions";
 
 const Login = () => {
-
     const onFinish = async (values: any) => {
+        const { email, password } = values;
 
+        // Trigger sign in
+        // Way 1: 
+        // const res = await signIn("credentials", { email, password, redirect: false });
+        const res = await authenticate(email, password);
+
+        console.log("Check: ", res);
+
+        // Way 2:
+        // const res = await authenticate(email, password);
+        // if (res) console.log("==> Check res: ", res);
+        // else console.log("Nothing");
     };
 
     return (
@@ -23,7 +36,7 @@ const Login = () => {
                         name="basic"
                         onFinish={onFinish}
                         autoComplete="off"
-                        layout='vertical'
+                        layout="vertical"
                     >
                         <Form.Item
                             label="Email"
@@ -31,7 +44,7 @@ const Login = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your email!',
+                                    message: "Please input your email!",
                                 },
                             ]}
                         >
@@ -44,17 +57,14 @@ const Login = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your password!',
+                                    message: "Please input your password!",
                                 },
                             ]}
                         >
                             <Input.Password />
                         </Form.Item>
 
-
-
-                        <Form.Item
-                        >
+                        <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 Login
                             </Button>
