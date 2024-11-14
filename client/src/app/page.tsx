@@ -1,13 +1,9 @@
-import { Button } from "antd";
-import Image from "next/image";
+import HomePage from "@/components/layout/homepage";
 
 export default function Home() {
-    return (
-        <>
-            <h1>Fullstack</h1>
-            <div>
-                <Button type="primary">Button</Button>
-            </div>
-        </>
-    );
+  return (
+    <div>
+      <HomePage />
+    </div>
+  );
 }

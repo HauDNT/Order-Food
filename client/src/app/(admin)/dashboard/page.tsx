@@ -1,10 +1,20 @@
 'use client'
-import React from 'react';
 
-const Dashboard: React.FC = () => {
+import AdminCard from "@/components/admin/admin.card";
+
+const DashboardPage = () => {
+
     return (
-        <>Dashboard</>
-    );
-};
+        <div>
+            <AdminCard />
+        </div>
+    )
+}
 
-export default Dashboard;
+export default DashboardPage;
+
+
+
+
+
+
