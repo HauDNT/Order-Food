@@ -3,14 +3,16 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { Public } from '@/decorators/publicEndpoint';
 import { RegisterAuthDto } from './dto/register-auth.dto';
+import { ResponseMessage } from '@/decorators/customize';
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     @Post("login")
-    @Public()       // Disabled check login API with JwtAuthGuard
+    @Public()
     @UseGuards(LocalAuthGuard)
+    @ResponseMessage("Fetch login")
     login(@Request() req) {
         return this.authService.login(req.user);
     }
@@ -22,7 +24,6 @@ export class AuthController {
     }
     
     @Get("profile")
-    // @UseGuards(JwtAuthGuard)         // Don't need to use JwtAuthGuard with UseGuards decorator
     getProfile(@Request() req) {
         return req.user;
     }

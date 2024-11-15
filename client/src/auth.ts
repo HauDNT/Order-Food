@@ -2,12 +2,13 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { InActiveAccountError, InvalidEmailPasswordError } from "./utils/error";
 import { sendRequest } from "./utils/api";
+import { IUser } from "./types/next-auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
         Credentials({
             credentials: {
-                email: {},
+                username: {},
                 password: {},
             },
             authorize: async (credentials) => {
@@ -15,12 +16,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     method: "POST",
                     url: "http://localhost:8080/api/v1/auth/login",
                     body: {
-                        username: credentials.email,
+                        username: credentials.username,
                         password: credentials.password,
                     }
                 });
 
-                if (!res.statusCode) {      // Success won't return a status code
+                if (res.statusCode === 201) {      // Success won't return a status code
                     return {
                         _id: res.data?.user._id,
                         email: res.data?.user.email,
@@ -28,13 +29,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         access_token: res.data?.access_token,
                     };
                 } 
+                // Inactive error - 400
+                else if (+res.statusCode === 400) {
+                    throw new InActiveAccountError();
+                }
                 // Password error - 401
                 else if (+res.statusCode === 401) {
                     throw new InvalidEmailPasswordError();
-                }
-                // Inactive error - 400
-                else if (+res.statusCode === 401) {
-                    throw new InActiveAccountError();
                 }
                 else {
                     throw new Error("Internal server error!");
@@ -44,5 +45,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     ],
     pages: {
         signIn: "/auth/login",
+    },
+    callbacks: {
+        jwt({ token, user }) {
+            if (user) {
+                token.user = (user as IUser);
+            };
+
+            return token;
+        },
+        session({ session, token }) {
+            (session.user as IUser) = token.user;
+            
+            return session;
+        },
+        authorized: async ({ auth }) => {
+            return !!auth;  
+            // -> Hàm này sẽ gán giá trị cho auth nếu người dùng đăng nhập
+            // !!auth -> Kiểm tra xem biến auth có giá trị hay không? Nếu có thì convert qua boolean
+        }
     }
 })

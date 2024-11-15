@@ -1,5 +1,6 @@
+import { join } from 'path';
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -18,8 +19,8 @@ import { RestaurantsModule } from '@/modules/restaurants/restaurants.module';
 import { ReviewsModule } from '@/modules/reviews/reviews.module';
 import { AuthModule } from '@/auth/auth.module';
 import { JwtAuthGuard } from '@/auth/passport/jwt-auth.guard';
-import { MailModule } from './mail/mail.module';
-import { join } from 'path';
+import { MailModule } from '@/mail/mail.module';
+import { TransformInterceptor } from '@/core/transform.interceptor';
 
 @Module({
     imports: [
@@ -76,6 +77,10 @@ import { join } from 'path';
         {
             provide: APP_GUARD,
             useClass: JwtAuthGuard,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: TransformInterceptor,
         }
     ],
 })

@@ -1,9 +1,9 @@
 import HomePage from "@/components/layout/homepage";
 
-export default function Home() {
-  return (
-    <div>
-      <HomePage />
-    </div>
-  );
+export default async function Home() {
+    return (
+        <div>
+            <HomePage />
+        </div>
+    );
 }
