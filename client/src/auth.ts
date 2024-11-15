@@ -1,5 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { InActiveAccountError, InvalidEmailPasswordError } from "./utils/error";
+import { sendRequest } from "./utils/api";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -9,21 +11,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 password: {},
             },
             authorize: async (credentials) => {
-                let user = null;
+                const res = await sendRequest<IBackendRes<ILogin>>({
+                    method: "POST",
+                    url: "http://localhost:8080/api/v1/auth/login",
+                    body: {
+                        username: credentials.email,
+                        password: credentials.password,
+                    }
+                });
 
-                // Call backend to verify user
-                user = {
-                    _id: "123",
-                    username: "123",
-                    email: "123",
-                    isVerify: true,
-                    type: "123",
-                    role: "123",
-                };
-
-                if (!user) throw new Error("User not found!");
-
-                return user;
+                if (!res.statusCode) {      // Success won't return a status code
+                    return {
+                        _id: res.data?.user._id,
+                        email: res.data?.user.email,
+                        name: res.data?.user.name,
+                        access_token: res.data?.access_token,
+                    };
+                } 
+                // Password error - 401
+                else if (+res.statusCode === 401) {
+                    throw new InvalidEmailPasswordError();
+                }
+                // Inactive error - 400
+                else if (+res.statusCode === 401) {
+                    throw new InActiveAccountError();
+                }
+                else {
+                    throw new Error("Internal server error!");
+                }
             }
         })
     ],

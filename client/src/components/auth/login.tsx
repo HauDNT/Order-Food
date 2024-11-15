@@ -11,8 +11,8 @@ const Login = () => {
 
         // Trigger sign in
         // Way 1: 
-        // const res = await signIn("credentials", { email, password, redirect: false });
-        const res = await authenticate(email, password);
+        const res = await signIn("credentials", { email, password, redirect: false });
+        // const res = await authenticate(email, password);
 
         console.log("Check: ", res);
 
