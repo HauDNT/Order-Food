@@ -1,35 +1,37 @@
-'use client'
+"use client"
 import React from 'react';
-import { Button, Col, Divider, Form, Input, notification, Row } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { sendRequest } from '@/utils/api';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import { Button, Col, Divider, Form, Input, message, notification, Row } from 'antd';
+import { sendRequest } from '@/utils/api';
 
-const Register = () => {
+const Verify = (props: any) => {
+    const { id } = props;
     const router = useRouter();
 
     const onFinish = async (values: any) => {
-        const { email, password, name } = values;
+        const { _id, code } = values;
 
         const res = await sendRequest<IBackendRes<any>>({
-            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/register`,
+            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/check-code`,
             method: "POST",
             body: {
-                email, password, name
+                _id, code
             }
         });
 
         if (res?.data) {
-            router.push(`/verify/${res?.data?._id}`)
+            message.success("Kích hoạt tài khoản thành công");
+            router.push(`/auth/login`);
         }
         else {
             notification.error({
-                message: "Đăng ký tài khoản không thành công",
+                message: "Kích hoạt tài khoản không thành công",
                 description: res?.message,
             })
         }
-    };
+    }
 
     return (
         <Row justify={"center"} style={{ marginTop: "30px" }}>
@@ -40,7 +42,7 @@ const Register = () => {
                     border: "1px solid #ccc",
                     borderRadius: "5px"
                 }}>
-                    <legend>Đăng Ký Tài Khoản</legend>
+                    <legend>Kích Hoạt Tài Khoản</legend>
                     <Form
                         name="basic"
                         onFinish={onFinish}
@@ -48,36 +50,31 @@ const Register = () => {
                         layout='vertical'
                     >
                         <Form.Item
-                            label="Email"
-                            name="email"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your email!',
-                                },
-                            ]}
+                            label="Id"
+                            name="_id"
+                            initialValue={id}
+                            hidden
                         >
-                            <Input />
+                            <Input disabled/>
                         </Form.Item>
 
+                        <div>
+                            Mã code đã được gửi đến Email đăng ký, vui lòng kiểm tra
+                        </div>
+
+                        <Divider/>
+
                         <Form.Item
-                            label="Password"
-                            name="password"
+                            label="Code"
+                            name="code"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your password!',
+                                    message: 'Please input your code!',
                                 },
                             ]}
                         >
                             <Input.Password />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Name"
-                            name="name"
-                        >
-                            <Input />
                         </Form.Item>
 
                         <Form.Item
@@ -99,4 +96,4 @@ const Register = () => {
     )
 }
 
-export default Register;
+export default Verify;

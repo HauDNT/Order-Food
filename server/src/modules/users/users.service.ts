@@ -11,6 +11,7 @@ import { RegisterAuthDto } from '@/auth/dto/register-auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
+import { CheckCodeDto } from '@/auth/dto/check-code-auth.dto';
 
 @Injectable()
 export class UsersService {
@@ -116,7 +117,7 @@ export class UsersService {
                 password: passwordHashed,
                 isActive: false,
                 codeId: codeIdGenerated,
-                codeExpired: dayjs().add(30, 'seconds'),
+                codeExpired: dayjs().add(5, 'minutes'),
                 // codeExpired: dayjs().add(5, 'minutes'),
             });
 
@@ -138,6 +139,28 @@ export class UsersService {
         }
         else {
             throw new BadRequestException(`Email ${email} đã tồn tại. Vui lòng sử dụng email khác!`);
+        }
+    }
+
+    async handleActive(checkCodeDto: CheckCodeDto) {
+        const user = await this.userModel.findOne({
+            _id: checkCodeDto._id,
+            codeId: checkCodeDto.code,
+        });
+
+        if (!user) throw new BadRequestException("Mã code không hợp lệ!");
+
+        // Check expire
+        const isBeforeCheck = dayjs().isBefore(user.codeExpired);
+
+        if (isBeforeCheck) {
+            // Valid -> update isActive = true
+            await this.userModel.updateOne({_id: checkCodeDto._id}, {isActive: true});
+            
+            return true;
+        }
+        else {
+            throw new BadRequestException("Mã code đã hết hạn!");
         }
     }
 }
