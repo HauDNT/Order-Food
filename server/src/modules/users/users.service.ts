@@ -155,12 +155,43 @@ export class UsersService {
 
         if (isBeforeCheck) {
             // Valid -> update isActive = true
-            await this.userModel.updateOne({_id: checkCodeDto._id}, {isActive: true});
-            
+            await this.userModel.updateOne({ _id: checkCodeDto._id }, { isActive: true });
+
             return true;
         }
         else {
             throw new BadRequestException("Mã code đã hết hạn!");
+        }
+    }
+
+    async handleRetryActive(email: string) {
+        // Check user
+        const user = await this.userModel.findOne({ email });
+
+        if (!user) throw new BadRequestException("Tài khoản không tồn tại!");
+        if (user.isActive) throw new BadRequestException("Tài khoản đã được kích hoạt!");
+
+        // Generate new code and update
+        const codeIdGenerated = uuidv4();
+        await user.updateOne({
+            codeId: codeIdGenerated,
+            codeExpired: dayjs().add(5, "minutes"),
+        });
+
+        // Send email
+        this.mailerService.sendMail({
+            to: user.email,
+            subject: 'Re-activate your account at OrderFood',
+            from: 'noreply@gmail.com',
+            template: "mailer.template.hbs",
+            context: {
+                name: user?.name ?? user.email,
+                activationCode: codeIdGenerated,
+            }
+        });
+
+        return {
+            _id: user._id,
         }
     }
 }

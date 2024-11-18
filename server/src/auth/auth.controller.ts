@@ -29,6 +29,12 @@ export class AuthController {
     checkCode(@Body() checkCodeDto: CheckCodeDto) {
         return this.authService.handleCheckCode(checkCodeDto);
     }
+
+    @Post("retry-active")
+    @Public()
+    retryActive(@Body("email") email: string) {
+        return this.authService.retryActive(email);
+    }
     
     @Get("profile")
     getProfile(@Request() req) {
