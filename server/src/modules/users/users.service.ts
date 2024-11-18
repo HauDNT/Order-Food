@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { CheckCodeDto } from '@/auth/dto/check-code-auth.dto';
+import { ChangePasswordAuthDto } from '@/auth/dto/change-password-auth.dto';
 
 @Injectable()
 export class UsersService {
@@ -193,5 +194,58 @@ export class UsersService {
         return {
             _id: user._id,
         }
+    }
+
+    async handleRetryPassword (email: string) {
+        // Check user
+        const user = await this.userModel.findOne({ email });
+
+        if (!user) throw new BadRequestException("Tài khoản không tồn tại!");
+
+        // Generate new code and update
+        const codeIdGenerated = uuidv4();
+        await user.updateOne({
+            codeId: codeIdGenerated,
+            codeExpired: dayjs().add(5, "minutes"),
+        });
+
+        // Send email
+        this.mailerService.sendMail({
+            to: user.email,
+            subject: 'Change your password account at OrderFood',
+            from: 'noreply@gmail.com',
+            template: "mailer.template.hbs",
+            context: {
+                name: user?.name ?? user.email,
+                activationCode: codeIdGenerated,
+            }
+        });
+
+        return {
+            _id: user._id,
+            email,
+        }
+    }
+
+    async handleChangePassword (changePasswordAuthDto: ChangePasswordAuthDto) {
+        const { email, code, password, confirmPassword } = changePasswordAuthDto;
+
+        if (password !== confirmPassword) throw new BadRequestException("Mật khẩu không trùng khớp");
+
+        // Check user
+        const user = await this.userModel.findOne({ email });
+
+        if (!user) throw new BadRequestException("Tài khoản không tồn tại!");
+
+        // Compare code
+        if (user.codeId === code) {
+            const passwordHashed = await hashPassword(password);
+            await user.updateOne({ password: passwordHashed });
+        }
+        else {
+            throw new BadRequestException("Mã xác thực không trùng khớp!");
+        }
+
+        return { _id: user._id };
     }
 }

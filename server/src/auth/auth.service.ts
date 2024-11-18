@@ -4,6 +4,7 @@ import { comparePassword } from '@/utils/bcryptPassword.util';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { CheckCodeDto } from './dto/check-code-auth.dto';
+import { ChangePasswordAuthDto } from './dto/change-password-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -49,5 +50,13 @@ export class AuthService {
 
     async retryActive(email: string) {
         return await this.usersService.handleRetryActive(email);
+    }
+
+    async retryPassword(email: string) {
+        return await this.usersService.handleRetryPassword(email);
+    }
+
+    async changePassword(changePasswordAuthDto: ChangePasswordAuthDto) {
+        return await this.usersService.handleChangePassword(changePasswordAuthDto);
     }
 }

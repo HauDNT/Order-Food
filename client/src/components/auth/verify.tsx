@@ -1,37 +1,35 @@
-"use client"
+'use client'
 import React from 'react';
-import Link from 'next/link';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { useRouter } from 'next/navigation';
 import { Button, Col, Divider, Form, Input, message, notification, Row } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 import { sendRequest } from '@/utils/api';
+import { useRouter } from 'next/navigation';
 
 const Verify = (props: any) => {
     const { id } = props;
-    const router = useRouter();
+
+    const router = useRouter()
 
     const onFinish = async (values: any) => {
         const { _id, code } = values;
-
         const res = await sendRequest<IBackendRes<any>>({
             url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/check-code`,
             method: "POST",
             body: {
                 _id, code
             }
-        });
-
+        })
         if (res?.data) {
-            message.success("Kích hoạt tài khoản thành công");
+            message.success("Kích hoạt tài khoản thành công.")
             router.push(`/auth/login`);
-        }
-        else {
+        } else {
             notification.error({
-                message: "Kích hoạt tài khoản không thành công",
-                description: res?.message,
+                message: "Verify error",
+                description: res?.message
             })
         }
-    }
+    };
 
     return (
         <Row justify={"center"} style={{ marginTop: "30px" }}>
@@ -42,7 +40,7 @@ const Verify = (props: any) => {
                     border: "1px solid #ccc",
                     borderRadius: "5px"
                 }}>
-                    <legend>Kích Hoạt Tài Khoản</legend>
+                    <legend>Kích hoạt tài khoản</legend>
                     <Form
                         name="basic"
                         onFinish={onFinish}
@@ -55,14 +53,12 @@ const Verify = (props: any) => {
                             initialValue={id}
                             hidden
                         >
-                            <Input disabled/>
+                            <Input disabled />
                         </Form.Item>
-
                         <div>
-                            Mã code đã được gửi đến Email đăng ký, vui lòng kiểm tra
+                            Mã code đã được gửi tới email đăng ký, vui lòng kiểm tra email.
                         </div>
-
-                        <Divider/>
+                        <Divider />
 
                         <Form.Item
                             label="Code"
@@ -74,8 +70,10 @@ const Verify = (props: any) => {
                                 },
                             ]}
                         >
-                            <Input.Password />
+                            <Input />
                         </Form.Item>
+
+
 
                         <Form.Item
                         >
@@ -93,6 +91,7 @@ const Verify = (props: any) => {
                 </fieldset>
             </Col>
         </Row>
+
     )
 }
 

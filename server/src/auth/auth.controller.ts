@@ -5,6 +5,7 @@ import { Public } from '@/decorators/publicEndpoint';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { ResponseMessage } from '@/decorators/customize';
 import { CheckCodeDto } from './dto/check-code-auth.dto';
+import { ChangePasswordAuthDto } from './dto/change-password-auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,6 +24,11 @@ export class AuthController {
     register(@Body() registerDto: RegisterAuthDto) {
         return this.authService.handleRegister(registerDto);
     }
+    
+    @Get("profile")
+    getProfile(@Request() req) {
+        return req.user;
+    }
 
     @Post("check-code")
     @Public()
@@ -35,9 +41,16 @@ export class AuthController {
     retryActive(@Body("email") email: string) {
         return this.authService.retryActive(email);
     }
-    
-    @Get("profile")
-    getProfile(@Request() req) {
-        return req.user;
+
+    @Post("retry-password")
+    @Public()
+    retryPassword(@Body("email") email: string) {
+        return this.authService.retryPassword(email);
+    }
+
+    @Post("change-password")
+    @Public()
+    changePassword(@Body() changePasswordAuthDto: ChangePasswordAuthDto) {
+        return this.authService.changePassword(changePasswordAuthDto);
     }
 }
